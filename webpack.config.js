@@ -9,7 +9,7 @@ module.exports = {
     /* 이 부분은 entry와 output의 기본값으로 생략 가능합니다. */
     entry: {
         index: './src/index.js',
-        // charts: './src/charts.js'
+        // charts: './src/chartJs.js'
     },
 
     output: {
@@ -22,14 +22,23 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.js$/,
+                test: /\.(js|jsx)$/,
                 exclude: /node_modules/,
                 use: {
                     loader: 'babel-loader',
                     options: {
-                        presets: ['@babel/preset-env']
+                        presets: ["@babel/preset-env", "@babel/preset-react"]
                     }
                 }
+            },
+            {
+                test: /\.html$/,
+                use: [
+                    {
+                        loader: "html-loader",
+                        options: { minimize: true }
+                    }
+                ]
             },
             {
                 test: /\.css$/,

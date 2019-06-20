@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { render } from 'react-dom';
+import Main from './Main';
+
 
 render(
-    'todo:making list ggg111',
-    document.getElementById('result')
-);
+        <Main />,
+        document.getElementById('app')
+)
