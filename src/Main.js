@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import ListChartLibaray from './chart/ListChartLibrary';
+import ChartjsIndex from './chart/chartjs/ChartjsIndex';
 
 export default class Main extends Component {
 
@@ -26,7 +27,7 @@ export default class Main extends Component {
 
         switch(this.state.chartLibraryId) {
             case 'chartjs':
-                _content = "todo:chartjs content"
+                _content = <ChartjsIndex />;
                 break;
 
             case 'test':

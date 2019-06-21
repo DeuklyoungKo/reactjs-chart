@@ -9,7 +9,7 @@ module.exports = {
     /* 이 부분은 entry와 output의 기본값으로 생략 가능합니다. */
     entry: {
         index: './src/index.js',
-        // charts: './src/chartJs.js'
+        // charts: './src/ChartjsIndex.js'
     },
 
     output: {

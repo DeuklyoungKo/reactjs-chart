@@ -1,0 +1,192 @@
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+<div id="chart-legends"></div>
+<canvas id="myChart" width="400" height="400"></canvas>
+<hr>
+<div>
+    <button type="button" onClick="fncDestory()">destroy</button>
+    <button type="button" onClick="addData(myChart,'Red',20)">addData</button>
+</div>
+
+<script>
+
+    var maxValue = 1;
+    var number = 0;
+    var ctx = document.getElementById('myChart');
+    var myChart = new Chart(ctx, {
+        type: 'horizontalBar',
+        data: {
+            labels: ['', '', '', '', '', ''],
+            datasets: [{
+                label: '',
+                data: [13, 19, 1, 5, 3, 2],
+                labels: ['Red4', 'Blue4', 'Yellow4', 'Green4', 'Purple4', 'Orange4'],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {mirror: true}
+                }]
+            },
+            responsive: false,
+            tooltips: {
+                mode: 'index'
+            },
+            legend: {
+                display: false,
+                labels: {
+                    fontColor: 'rgb(255, 99, 132)'
+                }
+            },
+            /*
+            legendCallback: function(chart) {
+                var text = [];
+                text.push('<ul>');
+                for (var i=0; i<chart.data.datasets.length; i++) {
+                    console.log(chart.data.datasets[i]); // see what's inside the obj.
+                    text.push('<li>');
+                    text.push('<span style="background-color:' + chart.data.datasets[i].borderColor + '">' + chart.data.datasets[i].label + '</span>');
+                    text.push('</li>');
+                }
+                text.push('</ul>');
+                return text.join("");
+            },
+            */
+            title: {
+                display: true,
+                text: 'Custom Chart Title'
+            },
+
+
+            animation: {
+                // onComplete: function () {
+                onProgress: function () {
+                    var chartInstance = this.chart;
+                    var ctx = chartInstance.ctx;
+                    console.log('chartInstance', chartInstance);
+                    var height = chartInstance.controller.boxes[0].bottom;
+                    ctx.textAlign = "left";
+                    ctx.textBaseline = 'middle';
+                    console.log('Chart.helpers.data=====', Chart.helpers.data);
+
+                    console.log('Chart.helpers=====',  Chart.helpers)
+
+                    Chart.helpers.each(
+                        this.data.datasets.forEach(
+                            function (dataset, i) {
+                                var meta = chartInstance.controller.getDatasetMeta(i);
+                                Chart.helpers.each(
+                                    meta.data.forEach(
+                                        function (bar, index) {
+                                            var centerPoint = bar.getCenterPoint();
+                                            console.log('dataset.data[index] =====',  dataset.data[index])
+                                            ctx.fillText(
+                                                dataset.labels[index] / ,
+                                                centerPoint.x,
+                                                centerPoint.y
+                                            )
+                                        }), this)
+                            }))
+                }
+            }
+
+        }
+
+
+    });
+
+    myChart.render({
+        duration: 800,
+        lazy: false,
+        easing: 'easeOutQuad'
+    });
+
+    // console.log(myChart.toBase64Image());
+
+    document.getElementById('chart-legends').innerHTML = myChart.generateLegend();
+
+    function fncDestory() {
+        myChart.destroy();
+    }
+
+    function changeData(indexNo1, indexNo2, target) {
+        var temp = null;
+
+        temp = target[indexNo1];
+        target[indexNo1] = target[indexNo2];
+        target[indexNo2] = temp;
+
+    }
+
+    function addData(chart, label, data) {
+
+        data = maxValue * data;
+        maxValue = data;
+
+        // chart.data.labels.push(label);
+        chart.data.datasets.forEach((dataset) => {
+        });
+        // console.log(chart.data.datasets[0].data);
+        // chart.data.datasets[0].data[0] = 30;
+
+        console.log('==chart', chart);
+        console.log('==chart.data', chart.data);
+
+        var meta = chart.getDatasetMeta(0);
+        console.log('==meta.data', meta.data);
+        /*
+
+                meta.data[0]._view.y = meta.data[1]._view.y;
+                console.log(meta.data[0]._view.y);
+        */
+        var tempMeta = null;
+        var tempValue = null;
+        var tempLabel = null;
+
+        var indexNo1 = 0;
+        var indexNo2 = 5;
+
+        /*        tempLabel = chart.data.labels[0];
+                chart.data.labels[0] = chart.data.labels[changeNo];
+                chart.data.labels[changeNo] = tempLabel;
+
+                tempValue = chart.data.datasets[0].data[0];
+                chart.data.datasets[0].data[0] = chart.data.datasets[0].data[indexNo2]
+                chart.data.datasets[0].data[indexNo2] = tempValue;
+
+                tempMeta = meta.data[0];
+                meta.data[0] = meta.data[indexNo2];
+                meta.data[indexNo2] = tempMeta;
+                */
+        this.changeData(indexNo1, indexNo2, chart.data.labels);
+        this.changeData(indexNo1, indexNo2, chart.data.datasets[0].backgroundColor);
+        this.changeData(indexNo1, indexNo2, chart.data.datasets[0].borderColor);
+        this.changeData(indexNo1, indexNo2, chart.data.datasets[0].data);
+        this.changeData(indexNo1, indexNo2, meta.data);
+
+        chart.options.title.text = number;
+
+        number++;
+
+        chart.update();
+
+    }
+
+</script>
