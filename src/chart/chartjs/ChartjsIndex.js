@@ -46,7 +46,6 @@ export default class ChartjsIndex extends Component {
 
     }
 
-
     componentDidMount() {
 
         const ctx = document.getElementById('myChart');
@@ -131,9 +130,7 @@ export default class ChartjsIndex extends Component {
                                 }))
                     }
                 }
-
             }
-
         });
 
         console.log(this.myChart);
@@ -161,10 +158,7 @@ export default class ChartjsIndex extends Component {
 
     }
 
-
     render(){
-
-        console.log('===this.myChart=======',this.myChart);
 
         return(
             <div>

@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import ListChartLibaray from './chart/ListChartLibrary';
 import ChartjsIndex from './chart/chartjs/ChartjsIndex';
+import ReactVisIndex from './chart/ReactVis/Index';
 
 export default class Main extends Component {
 
@@ -8,13 +9,14 @@ export default class Main extends Component {
         super(props);
 
         this.state = {
-            chartLibraryId: '',
+            chartLibraryId: 'ReactVis',
             _content: ''
         }
 
         this.listOfChartLibrary = [
-            { id: 'chartjs', text: 'chart.js', name: 'chartjs', link: '/chartjs.html'},
-            { id: 'test', text: 'chart.js1', name: 'test', link: '/chartjs.html'}
+            { id: 'ChartJs', text: 'Chart.js', name: 'chartjs', link: '#'},
+            { id: 'ReactVis', text: 'React-Vis', name: 'React-Vis', link: '#'},
+            { id: 'test', text: 'test', name: 'test', link: '/test.html'}
         ]
 
         this.handleOnClickLink = this.handleOnClickLink.bind(this);
@@ -26,8 +28,12 @@ export default class Main extends Component {
         let _content = null;
 
         switch(this.state.chartLibraryId) {
-            case 'chartjs':
+            case 'ChartJs':
                 _content = <ChartjsIndex />;
+                break;
+
+            case 'ReactVis':
+                _content = <ReactVisIndex />;
                 break;
 
             case 'test':
