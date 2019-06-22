@@ -8,7 +8,7 @@ export default function ListChartLibrary(props){
     return (
         <ul>
             { listOfChartLibrary.map(item =>
-                <li key={item.id}><a href='#' onClick={(e)=> handleOnClickLink(e, item.id)}>{item.text}</a></li>
+                <li key={item.id}><a href={item.link} onClick={(e)=> handleOnClickLink(e, item.id)}>{item.text}</a></li>
             )}
         </ul>
     )

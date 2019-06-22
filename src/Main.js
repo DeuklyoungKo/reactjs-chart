@@ -13,8 +13,8 @@ export default class Main extends Component {
         }
 
         this.listOfChartLibrary = [
-            { id: 'chartjs', text: 'chart.js', name: 'chartjs'},
-            { id: 'test', text: 'chart.js1', name: 'test'}
+            { id: 'chartjs', text: 'chart.js', name: 'chartjs', link: '/chartjs.html'},
+            { id: 'test', text: 'chart.js1', name: 'test', link: '/chartjs.html'}
         ]
 
         this.handleOnClickLink = this.handleOnClickLink.bind(this);
