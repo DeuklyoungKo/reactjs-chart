@@ -8,7 +8,6 @@
 </div>
 
 <script>
-
     var maxValue = 1;
     var number = 0;
     var ctx = document.getElementById('myChart');
@@ -98,7 +97,7 @@
                                             var centerPoint = bar.getCenterPoint();
                                             console.log('dataset.data[index] =====',  dataset.data[index])
                                             ctx.fillText(
-                                                dataset.labels[index] / ,
+                                                dataset.labels[index],
                                                 centerPoint.x,
                                                 centerPoint.y
                                             )
