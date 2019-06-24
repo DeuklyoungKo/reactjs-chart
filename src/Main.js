@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import ListChartLibaray from './chart/ListChartLibrary';
 import ChartjsIndex from './chart/chartjs/ChartjsIndex';
 import ReactVisIndex from './chart/ReactVis/Index';
+import C3jsIndex from './chart/C3js/Index';
 
 export default class Main extends Component {
 
@@ -9,13 +10,14 @@ export default class Main extends Component {
         super(props);
 
         this.state = {
-            chartLibraryId: 'ReactVis',
+            chartLibraryId: 'C3',
             _content: ''
         }
 
         this.listOfChartLibrary = [
             { id: 'ChartJs', text: 'Chart.js', name: 'chartjs', link: '#'},
             { id: 'ReactVis', text: 'React-Vis', name: 'React-Vis', link: '#'},
+            { id: 'C3', text: 'C3js', name: 'C3js', link: '#'},
             { id: 'test', text: 'test', name: 'test', link: '/test.html'}
         ]
 
@@ -34,6 +36,10 @@ export default class Main extends Component {
 
             case 'ReactVis':
                 _content = <ReactVisIndex />;
+                break;
+
+            case 'C3':
+                _content = <C3jsIndex />;
                 break;
 
             case 'test':
@@ -62,7 +68,10 @@ export default class Main extends Component {
         const listOfChartLibrary = this.listOfChartLibrary;
         const handleOnClickLink = this.handleOnClickLink;
 
+        const title = listOfChartLibrary.filter(item => item.id === this.state.chartLibraryId)[0].text;
         console.log(listOfChartLibrary);
+
+        console.log(listOfChartLibrary.filter(item => item.id === this.state.chartLibraryId)[0].text);
 
         return (
             <div>
@@ -72,6 +81,9 @@ export default class Main extends Component {
                     listOfChartLibrary={listOfChartLibrary}
                     handleOnClickLink={handleOnClickLink}
                 />
+                <h1>
+                    {title}
+                </h1>
                 {this.getContent()}
             </div>
         )
