@@ -3,6 +3,7 @@ import ListChartLibaray from './chart/ListChartLibrary';
 import ChartjsIndex from './chart/chartjs/ChartjsIndex';
 import ReactVisIndex from './chart/ReactVis/Index';
 import C3jsIndex from './chart/C3js/Index';
+import D3Index from './chart/D3/Index';
 
 export default class Main extends Component {
 
@@ -10,7 +11,7 @@ export default class Main extends Component {
         super(props);
 
         this.state = {
-            chartLibraryId: 'C3',
+            chartLibraryId: 'D3',
             _content: ''
         }
 
@@ -18,6 +19,7 @@ export default class Main extends Component {
             { id: 'ChartJs', text: 'Chart.js', name: 'chartjs', link: '#'},
             { id: 'ReactVis', text: 'React-Vis', name: 'React-Vis', link: '#'},
             { id: 'C3', text: 'C3js', name: 'C3js', link: '#'},
+            { id: 'D3', text: 'D3', name: 'D3', link: '#'},
             { id: 'test', text: 'test', name: 'test', link: '/test.html'}
         ]
 
@@ -40,6 +42,10 @@ export default class Main extends Component {
 
             case 'C3':
                 _content = <C3jsIndex />;
+                break;
+
+            case 'D3':
+                _content = <D3Index />;
                 break;
 
             case 'test':
