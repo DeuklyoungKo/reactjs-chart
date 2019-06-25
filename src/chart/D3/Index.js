@@ -19,7 +19,7 @@ export default class Index extends Component {
 
 
         var x = d3.scaleBand()
-            .domain(["A", "B", "C", "D", "E", "F"])
+            // .domain(["A", "B", "C", "D", "E", "F"])
             .rangeRound([0, width])
             .padding(0.1);
 
@@ -37,43 +37,53 @@ export default class Index extends Component {
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
         // d3.csv("data.tsv", type, function(error, data) {
-        d3.csv("../data/data.csv").then(function (data) {
-            data.forEach(function (d) {
-                d.value = +d.value; // coerce to number
-                return d;
-            });
-            x.domain(data.map(function (d) {
-                return d.name;
-            }));
-            y.domain([0, d3.max(data, function (d) {
-                return d.value;
-            })]);
+        // d3.csv("../data/data.csv")
+        d3.csv("https://gist.githubusercontent.com/mbostock/81aa27912ad9b1ed577016797a780b2c/raw/3a807eb0cbb0f5904053ac2f9edf765e2f87a2f5/alphabet.csv")
+            .then(function (data) {
+                console.log(data);
 
-            chart.append("g")
-                .attr("class", "x axis")
-                .attr("transform", "translate(0," + height + ")")
-                .call(xAxis);
+                data = data.map((item) => {
+                    return {name: item.letter, value: +item.frequency}
+                    });
 
-            chart.append("g")
-                .attr("class", "y axis")
-                .call(yAxis);
+                console.log("data===",data);
+/*
+                data.forEach(function (d) {
+                    d.value = +d.value; // coerce to number
+                    return d;
+                });*/
+                x.domain(data.map(function (d) {
+                    return d.name;
+                }));
+                y.domain([0, d3.max(data, function (d) {
+                    return d.value;
+                })]);
 
-            chart.selectAll(".bar")
-                .data(data)
-                .enter().append("rect")
-                .attr("class", "bar")
-                .attr("x", function (d) {
-                    return x(d.name);
-                })
-                .attr("y", function (d) {
-                    return y(d.value);
-                })
-                .attr("height", function (d) {
-                    return height - y(d.value);
-                })
-                .attr("width", x);
+                chart.append("g")
+                    .attr("class", "x axis")
+                    .attr("transform", "translate(0," + height + ")")
+                    .call(xAxis);
 
-        })
+                chart.append("g")
+                    .attr("class", "y axis")
+                    .call(yAxis);
+
+                chart.selectAll(".bar")
+                    .data(data)
+                    .enter().append("rect")
+                    .attr("class", "bar")
+                    .attr("x", function (d) {
+                        return x(d.name);
+                    })
+                    .attr("y", function (d) {
+                        return y(d.value);
+                    })
+                    .attr("height", function (d) {
+                        return height - y(d.value);
+                    })
+                    .attr("width", x.bandwidth());
+
+            })
     }
 
     componentDidMount() {
