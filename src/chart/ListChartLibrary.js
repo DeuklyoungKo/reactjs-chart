@@ -6,11 +6,11 @@ export default function ListChartLibrary(props){
     const { listOfChartLibrary, handleOnClickLink } = props;
 
     return (
-        <ul>
+        <div>
             { listOfChartLibrary.map(item =>
-                <li key={item.id}><a href={item.link} onClick={(e)=> handleOnClickLink(e, item.id)}>{item.text}</a></li>
+                <span key={item.id}>[<a href={item.link} onClick={(e)=> handleOnClickLink(e, item.id)}>{item.text}</a>] </span>
             )}
-        </ul>
+        </div>
     )
 }
 

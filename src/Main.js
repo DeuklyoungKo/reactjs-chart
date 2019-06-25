@@ -15,11 +15,12 @@ export default class Main extends Component {
             _content: ''
         }
 
+
         this.listOfChartLibrary = [
+            { id: 'D3', text: 'D3', name: 'D3', link: '#'},
             { id: 'ChartJs', text: 'Chart.js', name: 'chartjs', link: '#'},
             { id: 'ReactVis', text: 'React-Vis', name: 'React-Vis', link: '#'},
             { id: 'C3', text: 'C3js', name: 'C3js', link: '#'},
-            { id: 'D3', text: 'D3', name: 'D3', link: '#'},
             { id: 'test', text: 'test', name: 'test', link: '/test.html'}
         ]
 
