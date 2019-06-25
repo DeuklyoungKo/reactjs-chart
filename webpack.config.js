@@ -1,6 +1,7 @@
 const path = require('path');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
     mode: 'development',
@@ -15,6 +16,12 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, './public/build'),
         filename: '[name].[hash].bundle.js'
+    },
+
+    devServer: {
+        publicPath: "/",
+        contentBase: "./public",
+        hot: true
     },
 
     devtool: 'inline-source-map',
@@ -44,14 +51,17 @@ module.exports = {
                 test: /\.css$/,
                 use: ['style-loader', 'css-loader']
             }
-        ]
+            ]
+
     },
     plugins: [
         new HtmlWebPackPlugin({
             template: './src/index.html',
             filename: './index.html'
         }),
-
+        new CopyPlugin([
+            { from: './src/data', to: 'data' },
+        ]),
 
         new CleanWebpackPlugin()
     ]

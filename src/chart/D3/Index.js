@@ -12,110 +12,68 @@ export default class Index extends Component {
 
 
     init() {
-//API to fetch historical data of Bitcoin Price Index
-        const api = 'https://api.coindesk.com/v1/bpi/historical/close.json?start=2017-12-31&end=2018-04-01';
 
-        /**
-         * Loading data from API when DOM Content has been loaded'.
-         */
-        document.addEventListener("DOMContentLoaded", function(event) {
-            fetch(api)
-                .then(function(response) { return response.json(); })
-                .then(function(data) {
-                    var parsedData = parseData(data);
-                    drawChart(parsedData);
-                    console.log(parsedData);
-                })
-                .catch(function(err) { console.log(err); })
+        var width = 420,
+            barHeight = 20;
+
+        var x = d3.scaleLinear()
+            .range([0, width]);
+
+        var chart = d3.select(".chart")
+            .attr("width", width);
+
+
+        // d3.csv("./data.csv", type, function(error, data) {
+        d3.csv("../data/data.csv").then(function (data) {
+
+            data.forEach(function(d) {
+                d.value = +d.value; // coerce to number
+                return d;
+            });
+
+            console.log(data);
+
+            x.domain([0, d3.max(data, function(d) { return d.value; })]);
+
+            chart.attr("height", barHeight * data.length);
+
+            var bar = chart.selectAll("g")
+                .data(data)
+                .enter().append("g")
+                .attr("transform", function(d, i) { return "translate(0," + i * barHeight + ")"; });
+
+            bar.append("rect")
+                .attr("width", function(d) { return x(d.value); })
+                .attr("height", barHeight - 1);
+
+            bar.append("text")
+                .attr("x", function(d) { return x(d.value) - 3; })
+                .attr("y", barHeight / 2)
+                .attr("dy", ".35em")
+                .text(function(d) { return d.value; });
         });
 
-
-
-
-        /**
-         * Parse data into key-value pairs
-         * @param {object} data Object containing historical data of BPI
-         */
-        function parseData(data) {
-            var arr = [];
-            for (var i in data.bpi) {
-                arr.push({
-                    date: new Date(i), //date
-                    value: +data.bpi[i] //convert string to number
-                });
-            }
-            return arr;
+        function type(d) {
+            d.value = +d.value; // coerce to number
+            return d;
         }
 
-        /**
-         * Creates a chart using D3
-         * @param {object} data Object containing historical data of BPI
-         */
-        function drawChart(data) {
-            var svgWidth = 600, svgHeight = 400;
-            var margin = { top: 20, right: 20, bottom: 30, left: 50 };
-            var width = svgWidth - margin.left - margin.right;
-            var height = svgHeight - margin.top - margin.bottom;
+    }
 
-            var svg = d3.select('svg')
-                .attr("width", svgWidth)
-                .attr("height", svgHeight);
-
-            var g = svg.append("g")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-            var x = d3.scaleTime()
-                .rangeRound([0, width]);
-
-            var y = d3.scaleLinear()
-                .rangeRound([height, 0]);
-
-            var line = d3.line()
-                .x(function(d) { return x(d.date)})
-                .y(function(d) { return y(d.value)})
-            x.domain(d3.extent(data, function(d) { return d.date }));
-            y.domain(d3.extent(data, function(d) { return d.value }));
-
-            g.append("g")
-                .attr("transform", "translate(0," + height + ")")
-                .call(d3.axisBottom(x))
-                .select(".domain")
-                .remove();
-
-            g.append("g")
-                .call(d3.axisLeft(y))
-                .append("text")
-                .attr("fill", "#000")
-                .attr("transform", "rotate(-90)")
-                .attr("y", 6)
-                .attr("dy", "0.71em")
-                .attr("text-anchor", "end")
-                .text("Price ($)");
-
-            g.append("path")
-                .datum(data)
-                .attr("fill", "none")
-                .attr("stroke", "steelblue")
-                .attr("stroke-linejoin", "round")
-                .attr("stroke-linecap", "round")
-                .attr("stroke-width", 1.5)
-                .attr("d", line);
+        componentDidMount()
+        {
+            this.init();
         }
 
 
+        render()
+        {
+
+            return (
+                <div>
+                    <svg className="chart"></svg>
+                </div>
+            )
+
+        }
     }
-
-    componentDidMount() {
-        this.init();
-    }
-
-
-    render() {
-
-        return (
-            <svg className="line-chart"></svg>
-
-        )
-
-    }
-}
