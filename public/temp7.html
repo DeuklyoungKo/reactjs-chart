@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<body>
+
+<div>a</div>
+<div>b</div>
+<div>c</div>
+<div>d</div>
+<div>e</div>
+<div>f</div>
+<div>d</div>
+<div>d</div>
+
+
+<script src="//d3js.org/d3.v5.min.js"></script>
+<script>
+
+    var letters = [
+        {name: "A", frequency: .08167},
+        {name: "B", frequency: .01492},
+        {name: "C", frequency: .02780},
+        {name: "D", frequency: .04253},
+        {name: "E", frequency: .12702}
+    ];
+
+    var letters1 = [
+        1, 2, 3, 4, 5, 6
+    ];
+
+    function name(d) {
+        // console.log(d);
+        return d.name;
+    }
+
+/*    const selection1 = d3.selectAll("div").data(letters, function (d) {
+        console.log(d);
+        return d.name
+    });*/
+
+    const selection2 = d3.select('body').selectAll("div").data(letters1);
+
+    // console.log("selection1", selection1);
+    console.log("selection2", selection2);
+
+    const selection3 = selection2.exit().text('ee');
+        console.log("selection3", selection3);
+
+
+
+
+
+</script>
+</body>

@@ -1,21 +1,55 @@
-<script src="https://d3js.org/d3-dsv.v1.min.js"></script>
-<script src="https://d3js.org/d3-fetch.v1.min.js"></script>
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+    .chart rect {
+        fill: steelblue;
+    }
+
+    .chart text {
+        fill: white;
+        font: 10px sans-serif;
+        text-anchor: end;
+    }
+
+</style>
+<svg class="chart" height="500" width="600">
+    <circle  r="30" cx="30" cy="80"></circle>
+    <circle  r="30" cx="130" cy="180"></circle>
+</svg>
+<div></div>
+<script src="//d3js.org/d3.v5.min.js"></script>
 <script>
-/*
-    d3.csv("data.csv").then(function(data) {
-        console.log(data); // [{"Hello": "world"}, …]
-    });
-    */
+    /*
+    var svg = d3.select("svg")
+        .selectAll("circle")
+        .data([32, 57, 112, 293])
+        .enter().append("circle")
+        .attr("cy", 60)
+        .attr("cx", function(d, i) { return i * 100 + 30; })
+        .attr("r", function(d) { return Math.sqrt(d); });
+*/
 
-d3.csv("./data.csv", type, function(error, data) {
+    var width = 400, height = 300;
+    const data = [
+        {x: 30, y: 30},
+        {x: 80, y: 30},
+        {x: 130, y: 30},
+        {x: 180, y: 30},
+        {x: 230, y: 30},
+    ];
 
-    console.log(data);
-});
 
-function type(d) {
-    d.value = +d.value; // coerce to number
-    return d;
-}
-
+    const svg = d3.select(".chart");
+    svg.selectAll("circle")
+        .data(data)
+        .join(
+            enter => enter.append("circle").attr("fill", "green")
+                .attr("cx",(d => d.x))
+                .attr("cy",(d => d.y))
+                .attr('r',20),
+            update => update.attr("fill", "blue")
+        )
+        .attr("stroke", "black");
 
 </script>

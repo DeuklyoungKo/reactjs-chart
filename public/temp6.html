@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<body>
+
+<h2>1</h2>
+<h2>2</h2>
+<h2>3</h2>
+<h2>4</h2>
+<h2>5</h2>
+
+<table>
+    <tr>
+        <td><span>1</span></td>
+        <td><span>2</span></td>
+        <td><span>3</span></td>
+    </tr>
+    <tr>
+        <td>4</td>
+        <td>5</td>
+        <td><span>6</span><span>7</span></td>
+    </tr>
+</table>
+
+<p>My family and I visited The Epcot center this summer.</p>
+
+<aside>
+    <h4>Epcot Center</h4>
+    <p>The Epcot Center is a theme park in Disney World, Florida.</p>
+</aside>
+
+<script src="//d3js.org/d3.v5.min.js"></script>
+<script>
+
+    var numbers = [4, 5, 18, 23, 42];
+    var numbers1 = d3.selectAll("h2").data(numbers);
+    console.log("numbers1",numbers1);
+
+
+    console.log("======================================================")
+    var selection = d3.select("body");
+    console.log(selection);
+
+    var selection2 = d3.selectAll("tr");
+    console.log(selection2);
+
+    var selection3 = d3.selectAll("tr").selectAll("td");
+    console.log(selection3);
+
+    var selection4 = d3.selectAll("tr").selectAll("td").selectAll("span");
+    console.log(selection4);
+
+    var selection5 = d3.selectAll("tr").selectAll("td").append("h1");
+    console.log(selection5);
+
+    var selection6 = d3.selectAll("td").select("span");
+    console.log("selection6",selection6);
+
+    var selection7 = d3.selectAll("td").selectAll("span");
+    console.log("selection7",selection7);
+
+    document.body.__data__ = 42;
+    console.log("document.body", document.body);
+    console.log("document.body.__data__", document.body.__data__);
+
+    var selection8 = d3.select("body").datum(42);
+    var selection9 = selection8.append("h1");
+    console.log("selection8", selection8);
+    console.log("selection9", selection9);
+
+
+</script>
+</body>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<body>
+    <input type="checkbox" />gogo
+    <p>gogogogo</p>
+<script src="//d3js.org/d3.v5.min.js"></script>
+<script>
+    d3.selection.prototype.checked = function(value) {
+
+        console.log(!!value);
+
+        result = arguments.length < 1
+            ? this.property("checked")
+            : this.property("checked", !!value);
+
+        return result
+    };
+
+    d3.selectAll("input[type=checkbox]").checked();
+
+
+
+    d3.selectAll("p").on("click", function() {
+        d3.select(this).style("color", "red");
+    });
+
+</script>
+</body>
