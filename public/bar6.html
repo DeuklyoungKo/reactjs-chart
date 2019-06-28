@@ -48,15 +48,19 @@
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    d3.dsv(",", "data.csv", function(d,i) {
+    d3.dsv(",", "data.csv", function (d, i) {
         return {
             index: i,
             name: d.name,
             value: +d.value,
         };
-    }).then(function(data) {
-        x.domain(data.map(function(d) { return d.name; }));
-        y.domain([0, d3.max(data, function(d) { return d.value; })]);
+    }).then(function (data) {
+        x.domain(data.map(function (d) {
+            return d.name;
+        }));
+        y.domain([0, d3.max(data, function (d) {
+            return d.value;
+        })]);
 
         chart.append("g")
             .attr("class", "x axis")
@@ -66,7 +70,7 @@
 
         chart.append("g")
             .attr("class", "y axis")
-            .attr('fill',"#000099")
+            .attr('fill', "#000099")
             .call(yAxis)
             .append("text")
             .attr("transform", "rotate(-90)")
@@ -81,9 +85,15 @@
             .data(data)
             .enter().append("rect")
             .attr("class", "bar")
-            .attr("x", function(d) { return x(d.name); })
-            .attr("y", function(d) { return y(d.value); })
-            .attr("height", function(d) { return height - y(d.value); })
+            .attr("x", function (d) {
+                return x(d.name);
+            })
+            .attr("y", function (d) {
+                return y(d.value);
+            })
+            .attr("height", function (d) {
+                return height - y(d.value);
+            })
             .attr("width", x.bandwidth());
     });
 
