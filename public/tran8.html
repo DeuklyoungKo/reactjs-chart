@@ -64,7 +64,7 @@
         .attr("class", "timeTitle")
         .attr("x", width / 2 + 50)
         .attr("y", height + margin.top + 10)
-        .attr("text-anchor","end")
+        .attr("text-anchor", "end")
 
     d3.dsv(",", "data.csv", (d, i) => ({
             index: i,
@@ -131,6 +131,9 @@
                     .select(function () {
                         return this.parentNode;
                     })
+                // alignment-baseline
+                // REF: https://vanseodesign.com/web-design/svg-text-layout-and-alignment/
+
                 ,
                 update => update
                 ,
@@ -190,7 +193,7 @@
                 return function (t) {
                     dateValue = new Date(i(t));
                     d3.select(this).text(
-                        dateValue.toLocaleString('en-us', { month: 'long' })
+                        dateValue.toLocaleString('en-us', {month: 'long'})
                         + "." + dateValue.getFullYear()
                     );
                 };

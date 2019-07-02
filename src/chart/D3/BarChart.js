@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import * as d3 from "d3";
 import './index.css';
 
-export default class Index extends Component {
+export default class BarChart extends Component {
     constructor(props) {
         super(props);
 
@@ -10,18 +10,7 @@ export default class Index extends Component {
             dataIndex: 0
         };
 
-        this.config = {
-            margin: {top: 20, right: 30, bottom: 30, left: 40},
-            width: 500,
-            height: 300,
-            startDate: 1975,
-            endDate: 1978,
-            durationSec: 3000,
-            csvFileName: "../data/data_basic.csv"
-        }
-
         this.dataArray = [];
-        // this.dataIndex = 0;
         this.x = null;
         this.y = null;
         this.xAxis = null;
@@ -38,9 +27,8 @@ export default class Index extends Component {
 
     init() {
 
-
-        const { dataIndex } = this.state;
-        const {margin, width, height, startDate, endDate, csvFileName} = this.config;
+        const {dataIndex} = this.state;
+        const {margin, width, height, startDate, endDate, csvFileName} = this.props.config;
 
         let dataArray = this.dataArray;
         // let dataIndex = this.dataIndex;
@@ -106,8 +94,9 @@ export default class Index extends Component {
 
     makeChart(data) {
 
-        let { dataIndex } = this.state
-        const {margin, durationSec} = this.config;
+
+        let {dataIndex} = this.state;
+        const {margin, durationSec} = this.props.config;
 
         const t = d3.transition()
             .duration(durationSec)
@@ -235,16 +224,15 @@ export default class Index extends Component {
             })
             .on("end", () => {
 
-                console.log("dataIndex==",dataIndex,this.dataArray.length)
+                console.log("dataIndex==", dataIndex, this.dataArray.length)
                 if (dataIndex < this.dataArray.length - 1) {
 
-
+                    dataIndex++;
                     this.setState({
-                        dataIndex: dataIndex+1
+                        dataIndex: dataIndex
                     })
 
-/*                    this.dataIndex++
-                    this.makeChart(dataArray[this.dataIndex]);*/
+                    this.makeChart(dataArray[dataIndex]);
                 }
 
             })

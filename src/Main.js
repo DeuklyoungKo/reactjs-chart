@@ -3,7 +3,8 @@ import ListChartLibaray from './chart/ListChartLibrary';
 import ChartjsIndex from './chart/chartjs/ChartjsIndex';
 import ReactVisIndex from './chart/ReactVis/Index';
 import C3jsIndex from './chart/C3js/Index';
-import D3Index from './chart/D3/Index';
+import D3BarChartApp from './chart/D3/BarChartApp';
+import D3SampleApp from './chart/D3/SampleApp';
 
 export default class Main extends Component {
 
@@ -18,6 +19,7 @@ export default class Main extends Component {
 
         this.listOfChartLibrary = [
             { id: 'D3', text: 'D3', name: 'D3', link: '#'},
+            { id: 'D3SampleApp', text: 'D3SampleApp', name: 'D3SampleApp', link: '#'},
             { id: 'ChartJs', text: 'Chart.js', name: 'chartjs', link: '#'},
             { id: 'ReactVis', text: 'React-Vis', name: 'React-Vis', link: '#'},
             { id: 'C3', text: 'C3js', name: 'C3js', link: '#'},
@@ -46,7 +48,11 @@ export default class Main extends Component {
                 break;
 
             case 'D3':
-                _content = <D3Index />;
+                _content = <D3BarChartApp />;
+                break;
+
+            case 'D3SampleApp':
+                _content = <D3SampleApp />;
                 break;
 
             case 'test':
@@ -75,7 +81,10 @@ export default class Main extends Component {
         const listOfChartLibrary = this.listOfChartLibrary;
         const handleOnClickLink = this.handleOnClickLink;
 
-        const title = listOfChartLibrary.filter(item => item.id === this.state.chartLibraryId)[0].text;
+        console.log("listOfChartLibrary==",listOfChartLibrary);
+
+        const title = listOfChartLibrary
+            .filter(item => item.id === this.state.chartLibraryId)[0].text;
         console.log(listOfChartLibrary);
 
         console.log(listOfChartLibrary.filter(item => item.id === this.state.chartLibraryId)[0].text);
