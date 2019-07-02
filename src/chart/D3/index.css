@@ -1,4 +1,3 @@
-
 .bar {
     fill: steelblue;
 }
@@ -15,5 +14,5 @@
 }
 
 .x.axis path {
-    display: none;
+    /*display: none;*/
 }

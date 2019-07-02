@@ -6,85 +6,242 @@ export default class Index extends Component {
     constructor(props) {
         super(props);
 
-        this.state = {}
+        this.state = {};
+
+        this.config = {
+            margin: {top: 20, right: 30, bottom: 30, left: 40},
+            width: 500,
+            height: 300,
+            startDate: 1975,
+            endDate: 1978,
+            durationSec: 3000,
+            csvFileName: "../data/data_basic.csv"
+        }
+
+        this.dataArray = [];
+        this.dataIndex = 0;
+        this.x = null;
+        this.y = null;
+        this.xAxis = null;
+        this.yAxis = null;
+        this.chart = null;
+        this.svgWidth = null;
+        this.svgHeight = null;
+
+
+        this.makeChart = this.makeChart.bind(this);
 
     }
 
 
     init() {
 
-        var margin = {top: 20, right: 30, bottom: 30, left: 40},
-            width = 960 - margin.left - margin.right,
-            height = 500 - margin.top - margin.bottom;
+        const {margin, width, height, startDate, endDate, csvFileName} = this.config;
+
+        let dataArray = this.dataArray;
+        let dataIndex = this.dataIndex;
+        let x = this.x;
+        let y = this.y;
+        let xAxis = this.xAxis;
+        let yAxis = this.yAxis;
+        let chart = this.chart;
 
 
-        var x = d3.scaleBand()
-            // .domain(["A", "B", "C", "D", "E", "F"])
-            .rangeRound([0, width])
+        this.svgWidth = width - margin.left - margin.right;
+        this.svgHeight = height - margin.top - margin.bottom;
+
+        this.x = d3.scaleLinear()
+            .rangeRound([0, this.svgWidth]);
+
+        this.y = d3.scaleBand()
+            .rangeRound([0, this.svgHeight])
             .padding(0.1);
 
-        var y = d3.scaleLinear()
-            .range([height, 0]);
+        this.xAxis = d3.axisBottom(this.x);
+        this.yAxis = d3.axisLeft(this.y);
 
-        var xAxis = d3.axisBottom(x);
 
-        var yAxis = d3.axisLeft(y);
-
-        var chart = d3.select(".chart")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
+        this.chart = d3.select(".chart").append("svg")
+            .attr("width", this.svgWidth + margin.left + margin.right + 60)
+            .attr("height", this.svgHeight + margin.top + margin.bottom + 30)
             .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-        // d3.csv("data.tsv", type, function(error, data) {
-        // d3.csv("../data/data.csv")
-        d3.csv("https://gist.githubusercontent.com/mbostock/81aa27912ad9b1ed577016797a780b2c/raw/3a807eb0cbb0f5904053ac2f9edf765e2f87a2f5/alphabet.csv")
-            .then(function (data) {
-                console.log(data);
+        this.chart.append("g")
+            .attr("class", "x axis xaxis")
+            .attr("transform", "translate(0," + this.svgHeight + ")");
 
-                data = data.map((item) => {
-                    return {name: item.letter, value: +item.frequency}
-                    });
+        this.chart.append("g")
+            .attr("class", "y axis yaxis")
+            .attr('fill', "#000099");
 
-                console.log("data===",data);
-/*
-                data.forEach(function (d) {
-                    d.value = +d.value; // coerce to number
-                    return d;
-                });*/
-                x.domain(data.map(function (d) {
-                    return d.name;
-                }));
-                y.domain([0, d3.max(data, function (d) {
-                    return d.value;
-                })]);
+        this.chart.append("text")
+            .attr("class", "timeTitle")
+            .attr("x", this.svgWidth / 2 + 50)
+            .attr("y", this.svgHeight + margin.top + 10)
+            .attr("text-anchor", "end");
 
-                chart.append("g")
-                    .attr("class", "x axis")
-                    .attr("transform", "translate(0," + height + ")")
-                    .call(xAxis);
 
-                chart.append("g")
-                    .attr("class", "y axis")
-                    .call(yAxis);
-
-                chart.selectAll(".bar")
-                    .data(data)
-                    .enter().append("rect")
-                    .attr("class", "bar")
-                    .attr("x", function (d) {
-                        return x(d.name);
-                    })
-                    .attr("y", function (d) {
-                        return y(d.value);
-                    })
-                    .attr("height", function (d) {
-                        return height - y(d.value);
-                    })
-                    .attr("width", x.bandwidth());
-
+        d3.dsv(",", csvFileName, (d, i) => ({
+                index: i,
+                year: d.year,
+                name: d.name,
+                value: +d.value,
             })
+        ).then((data) => {
+
+            for (let i = startDate; i <= endDate; i++) {
+                this.dataArray = [...this.dataArray, data.filter(data => +data.year === i)]
+            }
+            this.makeChart(this.dataArray[dataIndex]);
+
+        })
+
     }
+
+
+    makeChart(data) {
+
+        const {margin, durationSec} = this.config;
+
+        const t = d3.transition()
+            .duration(durationSec)
+            .ease(d3.easeLinear);
+
+        let dataArray = this.dataArray;
+        let dataIndex = this.dataIndex;
+        let x = this.x;
+        let y = this.y;
+        let yAxis = this.yAxis;
+        let chart = this.chart;
+        let svgHeight = this.svgHeight;
+
+
+        data.sort((a, b) => {
+            return b.value - a.value
+        });
+
+        x.domain([0, d3.max(data, d => d.value)]);
+
+        y.domain(data.map(d => {
+            return d.name
+        }));
+
+
+        console.log("chart.select(.xaxis)==", chart.select(".xaxis").transition(t));
+        this.chart.select(".xaxis")
+            .transition(t)
+            .call(this.xAxis)
+
+
+        this.chart.select(".yaxis")
+            .transition(t)
+            .call(yAxis)
+
+        let bar = chart.selectAll("g.bar")
+            .data(data, function (d) {
+                return this.dataset.id || d.name;
+            })
+            .join(
+                enter => enter.append("g")
+                    .attr("class", "bar")
+                    .attr("data-id", (d) => (d.name))
+                    .attr("transform", (d) => (`translate(0,${svgHeight - margin.bottom})`))
+                    .append("rect")
+                    .attr("height", function (d) {
+                        return y.bandwidth();
+                    })
+                    .attr("width", 0)
+                    .select(function () {
+                        return this.parentNode;
+                    })
+                    .append('text')
+                    .attr("y", y.bandwidth() / 2)
+                    .text((d) => (d.name + ":" + d.value))
+                    .attr("data-value", 0)
+                    .attr("x", 0)
+                    .attr("dy", "0.1em")
+                    .attr("fill", "#ff002d")
+                    .attr("alignment-baseline", "right")
+                    .select(function () {
+                        return this.parentNode;
+                    })
+                ,
+                update => update
+                ,
+                exit => exit.transition(t)
+                    .attr("transform", (d) => (`translate(0,${svgHeight})`))
+                    .select('rect')
+                    .attr("width", 0)
+                    .select(function () {
+                        return this.parentNode;
+                    })
+                    .select('text')
+                    .attr("x", 0)
+                    .tween("text", function (d) {
+                        let i = d3.interpolateRound(this.dataset.value, 0);
+                        return function (t) {
+                            d3.select(this).text(d.name + ":" + i(t));
+                        };
+                    })
+                    .select(function () {
+                        return this.parentNode;
+                    })
+                    .remove()
+            );
+
+
+        bar.transition(t)
+            .attr("transform", (d) => ("translate(0," + y(d.name) + ")"))
+
+        bar.select("rect").transition(t)
+            .attr("width", function (d) {
+                return x(d.value)
+            })
+            .attr("height", function (d) {
+                return y.bandwidth();
+            })
+
+        bar.select('text')
+            .transition(t)
+            .attr("data-value", (d) => (d.value))
+            .attr("x", (d) => (x(d.value + 0.5)))
+            .tween("text", function (d) {
+                let i = d3.interpolateRound(this.dataset.value, d.value);
+                return function (t) {
+                    d3.select(this).text(d.name + ":" + i(t));
+                };
+            })
+
+
+        chart.select('.timeTitle')
+            .data(data)
+            .transition(t)
+            .tween("text", function (d) {
+                const i = d3.interpolateDate(
+                    new Date(`${d.year}-01-01`),
+                    new Date(`${d.year}-12-31`)
+                );
+                return function (t) {
+                    let dateValue = new Date(i(t));
+                    d3.select(this).text(
+                        dateValue.toLocaleString('en-us', {month: 'long'})
+                        + "." + dateValue.getFullYear()
+                    );
+                };
+            })
+            .on("end", () => {
+
+                console.log("dataIndex==", dataIndex, dataArray.length, dataArray)
+                if (dataIndex < dataArray.length - 1) {
+                    this.dataIndex++
+                    this.makeChart(dataArray[this.dataIndex]);
+                }
+            })
+
+        console.log("== makeChart end ==");
+    }
+
 
     componentDidMount() {
         this.init();
@@ -94,9 +251,7 @@ export default class Index extends Component {
     render() {
 
         return (
-            <div>
-                <svg className="chart"></svg>
-            </div>
+            <div className="chart"></div>
         )
 
     }
