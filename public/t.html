@@ -1,31 +1,64 @@
-<style>
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <!--<link href="css/nv.d3.css" rel="stylesheet">-->
+    <script src="//d3js.org/d3.v5.min.js" charset="utf-8"></script>
+    <!--<script src="lib/nv.d3.js" type="text/javascript" charset="utf-8"></script>-->
 
-    .bar {
-        fill: steelblue;
-    }
+</head>
 
-    .axis text {
-        font: 10px sans-serif;
-    }
+<body>
+<ul id="list">
+    <li data-username="shawnbot">Shawn Allen</li>
+    <li data-username="mbostock">Mike Bostock</li>
+    <li data-username="tttt">Mike tttt</li>
+</ul>
+<svg id="output" width="800" height="500"></svg>
 
-    .axis path,
-    .axis line {
-        fill: none;
-        stroke: #000;
-        shape-rendering: crispEdges;
-    }
+<script>
+    let rects = d3.select('svg#output')
+        .selectAll('rect')
+        .data(d3.range(10))
+        .enter()
+        .append('rect')
+        .attr("width",30)
+        .attr("height",30)
+        .attr("x",(d, i) => 1 + (i * 35))
+        .attr("y",10)
+        .attr("fill",'#0000ff')
+        .attr("stroke",'#00ff00')
 
-    .x.axis path {
-        display: none;
-    }
+    rects.transition()
+        .duration(2000)
+        .delay((d, i) => i * 300)
+        .styleTween('fill-opacity', () => d3.interpolateNumber(1, 0))
+     .remove() // remove element after end transition
 
-</style>
-<svg>
-    <g class="y axis" fill="none" font-size="10" font-family="sans-serif" text-anchor="end">
-        <text transform="rotate(-90)" y="6" x="10" dy=".71em" style="text-anchor: end; color: red;">Frequency111111
-        </text>
-    </g>
-    <rect x="10" y="10" width="100" height="100" stroke="blue"
-          fill="none"
-          fill-opacity="0.5" stroke-opacity="0.8"/>
-</svg>
+    const data1 = [
+        {name:"mbostock",value:20},
+        {name:"shawnbot",value:10},
+        {name:"tttt",value:30}
+        ]
+
+    let datum1 = d3.selectAll("li")
+        .data(data1,(d)=>{
+            console.log("==this1==",d);
+            return d
+        })
+        .join(
+            enter => enter.append("li")
+                .attr("class", (d)=>(d.name))
+            ,
+            update => update
+                .attr("class", (d)=>(d.name))
+        ).transition(t)
+        .attr("class",(d)=>(d.value))
+
+
+
+
+
+</script>
+</body>
+</html>

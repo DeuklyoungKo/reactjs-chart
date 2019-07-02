@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<svg width="960" height="500"></svg>
+<script src="//d3js.org/d3.v4.min.js"></script>
+<script>
+    var tau = 2 * Math.PI;
+    var arc = d3.arc()
+        .innerRadius(180)
+        .outerRadius(240)
+        .startAngle(0);
+    var svg = d3.select("svg"),
+        width = +svg.attr("width"),
+        height = +svg.attr("height"),
+        g = svg.append("g").attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+    var background = g.append("path")
+    //datum을 이용하면 json 이렇게
+    //data를 이용하면 [json] 이렇게 받는다.
+        .datum({endAngle: tau})
+        .data([{endAngle:tau}])
+        .style("fill", "#ddd")
+        .attr("d", arc);
+    var foreground = g.append("path")
+        .datum({endAngle: 0.127 * tau})
+        .style("fill", "orange")
+        .attr("d", arc);
+    foreground.transition()
+        .duration(750)
+        .attrTween("d", arcTween(Math.random() * tau));
+    function arcTween(newAngle) {
+        return function(d) {
+            var interpolate = d3.interpolate(d.endAngle, newAngle);
+            return function(t) {
+                //transition time, t동안의 endAngle을 정의하여 newAngle까지 순행한다.
+                d.endAngle = interpolate(t);
+                return arc(d);
+            };
+        };
+    }
+
+</script>

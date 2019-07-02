@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<svg class="chart"></svg>
+<script src="//d3js.org/d3.v5.min.js" charset="utf-8"></script>
+<script>
+
+    chart = function(){
+        const svg = d3.select(DOM.svg(width, height));
+
+        const bar = svg.append("g")
+            .attr("fill", "steelblue")
+            .selectAll("rect")
+            .data(data)
+            .join("rect")
+            .style("mix-blend-mode", "multiply")
+            .attr("x", d => x(d.name))
+            .attr("y", d => y(d.value))
+            .attr("height", d => y(0) - y(d.value))
+            .attr("width", x.bandwidth());
+
+        const gx = svg.append("g")
+            .call(xAxis);
+
+        const gy = svg.append("g")
+            .call(yAxis);
+
+        svg.node().update = () => {
+            const t = svg.transition()
+                .duration(750);
+
+            bar.data(data, d => d.name)
+                .order()
+                .transition(t)
+                .delay((d, i) => i * 20)
+                .attr("x", d => x(d.name));
+
+            gx.transition(t)
+                .call(xAxis)
+                .selectAll(".tick")
+                .delay((d, i) => i * 20);
+        };
+
+        return svg.node();
+    }
+
+
+    const margin = {top: 20, right: 0, bottom: 30, left: 40},
+        width = 760,
+        height = 500;
+
+    d3.dsv(",", "https://gist.githubusercontent.com/mbostock/81aa27912ad9b1ed577016797a780b2c/raw/3a807eb0cbb0f5904053ac2f9edf765e2f87a2f5/alphabet.csv",
+        function (d, i) {
+            console.log(d);
+            return {
+                name: d.name,
+                value: +d.frequency,
+            };
+        }).then(function (data) {
+
+        const x = d3.scaleBand()
+            .domain(data.map(d => d.name))
+            .range([margin.left, width - margin.right])
+            .padding(0.1);
+
+        const y = d3.scaleLinear()
+            .domain([0, d3.max(data, d => d.value)]).nice()
+            .range([height - margin.bottom, margin.top]);
+
+        const xAxis = g => g
+            .attr("transform", `translate(0,${height - margin.bottom})`)
+            .call(d3.axisBottom(x).tickSizeOuter(0));
+
+        const yAxis = g => g
+            .attr("transform", `translate(${margin.left},0)`)
+            .call(d3.axisLeft(y))
+            .call(g => g.select(".domain").remove())
+    });
+    /*
+
+         const svg = d3.select('.chart');
+
+         const bar = svg.append("g")
+             .attr("fill", "steelblue")
+             .selectAll("rect")
+             .data(data)
+             .join("rect")
+             .style("mix-blend-mode", "multiply")
+             .attr("x", d => x(d.name))
+             .attr("y", d => y(d.value))
+             .attr("height", d => y(0) - y(d.value))
+             .attr("width", x.bandwidth());
+
+         const gx = svg.append("g")
+             .call(xAxis);
+
+         const gy = svg.append("g")
+             .call(yAxis);
+
+         svg.node().update = () => {
+             const t = svg.transition()
+                 .duration(750);
+
+             bar.data(data, d => d.name)
+                 .order()
+                 .transition(t)
+                 .delay((d, i) => i * 20)
+                 .attr("x", d => x(d.name));
+
+             gx.transition(t)
+                 .call(xAxis)
+                 .selectAll(".tick")
+                 .delay((d, i) => i * 20);
+         };
+ */
+</script>

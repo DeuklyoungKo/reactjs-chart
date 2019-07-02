@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+    .bar {
+        fill: steelblue;
+    }
+
+    .axis text {
+        font: 10px sans-serif;
+    }
+
+    .axis path,
+    .axis line {
+       fill: none;
+        stroke: #000;
+        shape-rendering: crispEdges;
+    }
+
+    .x.axis path {
+        /*display: none;*/
+    }
+
+</style>
+<svg class="chart"></svg>
+<script src="//d3js.org/d3.v5.min.js" charset="utf-8"></script>
+<script>
+
+    var margin = {top: 20, right: 30, bottom: 30, left: 40},
+        width = 500 - margin.left - margin.right,
+        height = 300 - margin.top - margin.bottom;
+
+    var y = d3.scaleBand()
+        .rangeRound([0, height])
+        .padding(0.1);
+
+    var x = d3.scaleLinear()
+        .rangeRound([0,width])
+
+    var xAxis = d3.axisBottom(x);
+
+    var yAxis = d3.axisLeft(y);
+
+    var chart = d3.select(".chart")
+        .attr("width", width + margin.left + margin.right+30)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    d3.dsv(",", "data1.csv", function (d, i) {
+        console.log(d);
+
+        return {
+            index: i,
+            year: d.year,
+            name: d.name,
+            value: +d.value,
+        };
+    }).then(function (data) {
+
+
+
+        y.domain(data.map(function (d) {
+            return d.name;
+        }));
+        x.domain([0, d3.max(data, function (d) {
+            return d.value;
+        })]);
+
+        chart.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(xAxis)
+
+
+        chart.append("g")
+            .attr("class", "y axis")
+            .attr('fill', "#000099")
+            .call(yAxis)
+/*            .append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 6)
+            .attr("x", 10)
+            .attr("fill", "currentColor")
+            .attr("dy", ".71em")
+            .style("text-anchor", "end")
+            .text("Frequency111111");*/
+
+        let bar = chart.selectAll(".bar")
+            .data(data)
+            .enter().append("g")
+            .attr("class", "bar")
+            .attr("transform", (d, i) => ("translate(0,"+y(d.name)+")"));
+
+        bar.append("rect")
+            .attr("height", function (d) {
+                return y.bandwidth();
+            })
+            .attr("width", function (d) {
+                return x(d.value)
+            })
+
+        bar.append("text")
+            .text((d)=>(d.name))
+            .attr("x",(d)=>(x(d.value+0.5)))
+            .attr("y", y.bandwidth()/2)
+            .attr("dy", "0.1em")
+            .attr("fill","#ff002d")
+            .attr("alignment-baseline","right")
+    });
+
+    function type(d) {
+        d.value = +d.value; // coerce to number
+        return d;
+    }
+
+</script>

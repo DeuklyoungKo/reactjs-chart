@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+    .bar {
+        fill: steelblue;
+    }
+
+    .axis text {
+        font: 10px sans-serif;
+    }
+
+    .axis path,
+    .axis line {
+        fill: none;
+        stroke: #000;
+        shape-rendering: crispEdges;
+    }
+
+    .x.axis path {
+        /*display: none;*/
+    }
+
+</style>
+<svg class="chart"></svg>
+<button type="button" onClick="play2()">start</button>
+<script src="//d3js.org/d3.v5.min.js" charset="utf-8"></script>
+<script>
+
+    var margin = {top: 20, right: 30, bottom: 30, left: 40},
+        width = 500 - margin.left - margin.right,
+        height = 300 - margin.top - margin.bottom,
+        startDate = 1975,
+        endDate = 1976,
+        durationSec = 3000,
+        dataIndex=0;
+
+
+    var y = d3.scaleBand()
+        .rangeRound([0, height])
+        .padding(0.1);
+
+    var x = d3.scaleLinear()
+        .rangeRound([0, width])
+
+    var xAxis = d3.axisBottom(x);
+
+    var yAxis = d3.axisLeft(y);
+
+    var chart = d3.select(".chart")
+        .attr("width", width + margin.left + margin.right + 60)
+        .attr("height", height + margin.top + margin.bottom + 30)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    let xAxisObj = null;
+    let yAxisObj = null;
+    let dataSet = null;
+    let t = null;
+
+    d3.dsv(",", "data.csv", (d, i) => ({
+            index: i,
+            year: d.year,
+            name: d.name,
+            value: +d.value,
+        })
+    ).then((data) => {
+
+        dataSet = data
+
+        dataSet[dataIndex] = data.filter(data => data.year === "1975").sort((a, b) => b.value - a.value)
+        console.log("dataSet[0]", dataSet[dataIndex]);
+        makeChart(dataSet[dataIndex]);
+
+        dataIndex++
+        return dataSet
+    }).then((data) => {
+        dataSet[1] = data.filter(data => data.year === "1976")
+        // updateChart(data[1])
+
+        dataSet[2] = data.filter(data => data.year === "1977")
+
+        // updateChart(data[2])
+
+/*
+        async function playData() {
+            await updateChart(data[1],1000)
+            await updateChart(data[2],1000)
+        }
+        playData();*/
+
+       updateChart(dataSet[dataIndex],1000)
+       // updateChart(data[2],1000)
+
+    })
+
+    function makeChart(data) {
+
+        y.domain(data.map(function (d) {
+            return d.name;
+        }));
+        x.domain([0, d3.max(data, function (d) {
+            return d.value;
+        })]);
+
+        xAxisObj = chart.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(xAxis)
+
+        yAxisObj = chart.append("g")
+            .attr("class", "y axis")
+            .attr('fill', "#000099")
+            .call(yAxis)
+
+        let bar = chart.selectAll(".bar")
+            .data(data)
+            /*
+                        .join(
+                            enter => enter.append("g")
+                                .attr("class", "bar")
+                                .attr("data-key", (d) => (d.name))
+                                .attr("transform", (d) => ("translate(0," + y(d.name) + 10+")")),
+                            update => update
+                                .attr("transform", (d) => ("translate(0," + y(d.name) + ")"))
+                        )
+            */
+
+            .enter().append("g")
+            .attr("class", "bar")
+            .attr("data-key", (d) => (d.name))
+            .attr("transform", (d, i) => ("translate(0," + y(d.name) + ")"));
+
+
+        let barRect = bar.append("rect")
+            .attr("height", function (d) {
+                return y.bandwidth();
+            })
+            .attr("width", function (d) {
+                return x(d.value)
+            })
+
+        let barText = bar.append("text")
+            .attr("class", "text1")
+            .text((d) => (d.name + ":" + d.value))
+            .attr("x", (d) => (x(d.value + 0.5)))
+            .attr("y", y.bandwidth() / 2)
+            .attr("dy", "0.1em")
+            .attr("fill", "#ff002d")
+            .attr("alignment-baseline", "right");
+
+        chart.append("text")
+            .data(data)
+            .attr("class", "timeTitle")
+            .attr("x", width / 2)
+            .attr("y", height + margin.top + 10)
+            .text((d) => ("time :" + startDate))
+    }
+
+    function updateChart(inData, sec) {
+        // return new Promise(function (resolve, reject) {
+            // setTimeout(function () {
+
+                t = d3.transition()
+                    .duration(durationSec)
+                    .ease(d3.easeLinear);
+
+                console.log("==updateChart==");
+                console.log("==inData==", inData);
+
+                inData.sort((a, b) => b.value - a.value);
+                console.log("==sorted inData==", inData);
+
+                y.domain(inData.map(function (d) {
+                    return d.name;
+                }));
+
+                x.domain([0, d3.max(inData, function (d) {
+                    return d.value;
+                })]);
+
+                xAxisObj.transition(t).call(xAxis);
+                yAxisObj.transition(t).call(yAxis);
+
+                let barUpdate = chart.selectAll("g.bar")
+
+                barUpdate.data(inData, (d) => {
+
+                    let subG = barUpdate.filter(barD => {
+                        // console.log("==barD.name==", barD.name,d.name)
+                        return barD.name === d.name
+                    })
+
+                    subG.transition(t)
+                        .attr("transform", "translate(0," + y(d.name) + ")")
+
+                    console.log("==d.value==",d.name, d.value, x(d.value))
+
+                    subG.transition(t).select('rect')
+                        .attr("width", x(d.value))
+
+                    subG.transition(t).select("text")
+                        .tween("text", function (d1) {
+                            var i = d3.interpolateRound(d1.value, d.value);
+                            return function (t) {
+                                d3.select(this).text(d.name + ":" + i(t));
+                            };
+                        })
+                        .attr("x", x(d.value + 0.5))
+                })
+
+                console.log("==inData2==",inData,barUpdate)
+/*
+
+                barUpdate.data(inData)
+                    .join(
+                        enter => enter.append("g")
+                            .attr("class", "bar")
+                            .attr("data-key", (d) => (d.name))
+                            .attr("transform", (d) => ("translate(0," + y(d.name) + ")")),
+                        update => update
+                            .attr("transform", (d) => ("translate(0," + y(d.name) + ")"))
+                    )
+
+/!*                    // .transition(t)
+                    .attr("transform", (d) => {
+                        console.log("==y(d.name)==",y(d.name),d.name)
+                        return "translate(0," + y(d.name) + ")"
+                    })*!/
+                    .select("ract")
+                    .attr("width", function (d) {
+                        console.log("==x(d.value)==",x(d.value),d.value)
+                        return x(d.value)
+                    })
+                ;
+*/
+
+                chart.select('.timeTitle')
+                    .transition(t).text("time : " + endDate)
+                    .tween("text", function (d) {
+                        var i = d3.interpolateDate(new Date(startDate + "/01"), new Date(endDate + "/02"));
+                        return function (t) {
+                            dateValue = new Date(i(t));
+                            d3.select(this).text("time : " + dateValue.getMonth() + "." + dateValue.getFullYear());
+                        };
+                    })
+                    .on("end",()=>{
+                        dataIndex++
+                        // console.log("check end",this,dataIndex);
+                        if (dataIndex < 3) {
+                            console.log("dataSet[dataIndex]",dataSet[dataIndex]);
+                            // updateChart(dataSet[dataIndex],1000);
+                        }
+
+                    })
+
+                // resolve("async는 Promise방식을 사용합니다.");
+            // }, sec);
+        // })
+    }
+
+
+    function play2(){
+        updateChart(dataSet[2],1000);
+    }
+
+
+</script>

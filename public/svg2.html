@@ -1,0 +1,138 @@
+<svg width="350" height="160">
+    <!-- 60px x 10px margin -->
+    <g class="layer" transform="translate(60,10)">
+        <!-- cx = 270px * ($X / 3)
+                    ^      ^   ^
+        width of graph  x-value max(x)
+
+              cy = 120px - (($Y / 80) * 120px)
+                     ^       ^     ^       ^
+          top of graph   y-value  max(y)  scale -->
+        <circle r="5" cx="0" cy="105"/>
+        <circle r="5" cx="90" cy="90"/>
+        <circle r="5" cx="180" cy="60"/>
+        <circle r="5" cx="270" cy="0"/>
+
+        <g class="y axis">
+            <line x1="0" y1="0" x2="0" y2="120" stroke="black"/>
+            <text x="-40" y="105" dy="5">$10</text>
+            <text x="-40" y="0" dy="5">$80</text>
+        </g>
+        <g class="x axis" transform="translate(0, 120)">
+            <line x1="0" y1="0" x2="270" y2="0" stroke="black"/>
+            <text x="-30" y="20">January 2014</text>
+            <text x="240" y="20">April</text>
+        </g>
+    </g>
+</svg>
+<br>
+<svg class="chart"></svg>
+<script src="//d3js.org/d3.v5.min.js" charset="utf-8"></script>
+<script>
+    var numbers = [5, 4, 10, 1],
+        data = [
+            {date: '2014-01-01', amount: 10},
+            {date: '2014-02-01', amount: 20},
+            {date: '2014-03-01', amount: 40},
+            {date: '2014-04-01', amount: 80}
+        ],
+        height = 400,
+        width = 600,
+        barWidth = 10,
+        padding = 20;
+
+    d3.min(numbers);
+    d3.max(data, function (d, i) {
+        return d.amount
+    });
+    // 80
+    d3.extent(numbers);
+    // [1, 10]
+
+    // console.log(d3.max(data, function(d) { return d.amount }));
+
+    var y = d3.scaleLinear()
+    // .domain([0, 80]) // $0 to $80
+        .domain([0, d3.max(data, function (d) {
+            return d.amount
+        })])
+        .range([height - padding, padding]); // Seems backwards because SVG is y-down
+
+    console.log(d3.extent(data, function(d) { return d.date; }))
+/*
+
+    var x = d3.scaleTime()
+        .domain([
+            new Date(Date.parse('2013-12-25')),
+            new Date(Date.parse('2014-04-01'))
+        ])
+        // .domain(d3.extent(data, function(d) { return d.date; }))
+        .range([padding, width - padding]);
+
+    x.ticks(10);
+*/
+
+    var x = d3.scaleBand()
+        .rangeRound([0, width])
+        .padding(0.1);
+
+    x.domain(data.map(function(d) { return d.date; }));
+
+
+
+    // x(new Date(Date.parse('2014-02-01')));
+    // 103.3811949976841
+
+    // x is the d3.scaleTime()
+    var xAxis = d3.axisBottom(x)
+        // .ticks(8); // specify the number of ticks
+
+    var yAxis = d3.axisLeft(y)
+    // .ticks(10, "%");
+
+    var svg = d3.select('.chart')
+        .attr("width", width)
+        .attr("height", height)
+        // .append("g")
+        // .attr("transform", "translate(" + padding + "," + padding + ")");
+
+    svg.append('g')            // create a <g> element
+        // .attr("transform", "translate(" + padding + "," + (height - padding) + ")")
+        .attr("transform", "translate(" + padding + "," + (height - padding) + ")")
+        .attr('class', 'x axis') // specify classes
+        .call(xAxis);            // let the axis do its thing
+
+    svg.append('g')
+        .attr("transform", "translate(" + padding + ",0)")
+        .attr('class', 'y axis') // specify classes
+        .attr('fill', "#000099")
+        .call(yAxis);            // let the axis do its thing
+
+    svg.append('g')
+        .attr("transform", "translate(" + (padding + (x.bandwidth()-barWidth)/2) + ",0)")
+        .selectAll('.bar')
+        .data(data)
+        .enter()
+        .append('rect')
+        .attr("class", "bar")
+
+        .attr("x",function (d) {
+            console.log(x(d.date));
+            return x(d.date);
+        })
+/*        .attr("x", function (d) {
+            console.log(new Date(Date.parse(d.date)));
+            return x(new Date(Date.parse(d.date)));
+        })*/
+        // .attr("transform", function(d) { return "translate(" + x(d.date) + ",0)"; })
+
+
+        .attr("y", function (d) {
+            return y(d.amount);
+        })
+        .attr("height",function (d) {
+            return height - padding - y(d.amount);
+        })
+        .attr("width",barWidth)
+
+</script>

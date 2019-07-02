@@ -1,0 +1,31 @@
+<!--<svg class="chart"></svg>-->
+<body>
+
+</body>
+<script src="//d3js.org/d3.v5.min.js" charset="utf-8"></script>
+<script>
+
+    // const n = [10,20,30,40];
+    const n = 10;
+
+    var whiteblue = d3.interpolateRgb("#eee", "steelblue");
+
+    console.log(d3.range(n));
+
+    d3.select("body").selectAll("div")
+        .data(d3.range(n))
+        .enter().append("div")
+        .append("text").text("gogogo")
+        .transition()
+        .delay(function(d,i){
+            return i + Math.random() /10 *n;
+        })
+        .ease(d3.easeLinear)
+        .on("start", function repeat(){
+            d3.active(this)
+                .styleTween("background-color", function(){
+                    return whiteblue;
+                })
+                .transition()
+        })
+</script>

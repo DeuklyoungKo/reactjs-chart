@@ -1,0 +1,60 @@
+<script src="https://d3js.org/d3.v4.js"></script>
+
+<svg width="300" height="300"></svg>
+<script>
+    var svg = d3.select("svg"),
+        margin = {top: 40, right: 40, bottom: 40, left: 40},
+        width = svg.attr("width") - margin.left - margin.right,
+        height = svg.attr("height") - margin.top - margin.bottom,
+        g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    var xScale = d3.scaleLinear().domain([0, 10]).range([0, width]),
+        yScale = d3.scaleLinear().domain([0, 10]).range([height, 0]);
+
+    var xAxis = d3.axisBottom().scale(xScale).ticks(12, d3.format(",d")),
+        yAxis = d3.axisLeft().scale(yScale);
+
+    svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis);
+
+    svg.append("g")
+        .attr("class", "y axis")
+        .call(yAxis);
+
+    // inital draw
+    var dot = svg.append("g")
+        .attr("class", "dots")
+        .selectAll(".dot")
+        .data(dataForKey(1))
+        .enter().append("circle")
+        .attr("class", "dot")
+        .style("fill", "#000000")
+        .attr("cx", function(d) { return xScale(d.x); })
+        .attr("cy", function(d) { return yScale(d.y); })
+        .attr("r", function(d) { return 5; });
+
+    // updated Data
+    next(1);
+
+    function dataForKey(key)
+    {
+        return [{x:key, y:key}];
+    }
+
+    function next(keyIndex) {
+        if (keyIndex < 10) {
+            console.log("start test")
+            d3.selectAll(".dot")
+                .data(dataForKey(keyIndex))
+                .transition().duration(3000)
+                .attr("cx", function(d) { return xScale(d.x); })
+                .attr("cy", function(d) { return yScale(d.y); })
+                .on("end", function() {
+                    console.log("end test")
+                    next(keyIndex + 1)
+                });
+        }
+    }
+</script>

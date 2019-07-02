@@ -14,11 +14,11 @@
 
 </style>
 <svg class="chart">
-    <circle r="20" cx="30" cy="80" fill="green"></circle>
-    <circle r="20" cx="80" cy="80" fill="green"></circle>
-    <circle r="20" cx="130" cy="80" fill="green"></circle>
-    <circle r="20" cx="180" cy="80" fill="green"></circle>
-    <circle r="20" cx="230" cy="80" fill="green"></circle>
+    <circle id="a" r="20" cx="30" cy="80" fill="green"></circle>
+    <circle id="b" r="20" cx="80" cy="80" fill="green"></circle>
+    <circle id="c" r="20" cx="130" cy="80" fill="green"></circle>
+    <circle id="d" r="20" cx="180" cy="80" fill="green"></circle>
+    <circle id="e" r="20" cx="230" cy="80" fill="green"></circle>
 </svg>
 <button type="button" onClick="changeData()">changeData</button>
 <script src="//d3js.org/d3.v5.min.js"></script>
@@ -38,40 +38,41 @@
     let data = [];
 
     data[0] = [
-        {x: 40, y: 20, color: "blue"},
-        {x: 80, y: 20, color: "blue"},
-        {x: 120, y: 20, color: "blue"},
-        {x: 160, y: 20, color: "blue"},
-        {x: 200, y: 20, color: "blue"}
+        {id:"a", x: 40, y: 20, color: "blue", r:10},
+        {id:"b", x: 80, y: 20, color: "blue", r:5},
+        {id:"c", x: 120, y: 20, color: "blue", r:15},
+        {id:"d", x: 160, y: 20, color: "blue", r:20},
+        {id:"e", x: 200, y: 20, color: "blue", r:25}
     ];
 
-    data[1] = [
-        {x: 40, y: 40, color: "red"},
-        {x: 80, y: 40, color: "red"},
-        {x: 120, y: 40, color: "red"},
-        {x: 160, y: 40, color: "red"},
-        {x: 200, y: 40, color: "red"}
-    ];
+        data[1] = [
+            {id:"a", x: 40, y: 40, color: "red", r:10},
+            {id:"b", x: 80, y: 40, color: "red", r:5},
+            {id:"c", x: 120, y: 40, color: "red", r:15},
+            {id:"d", x: 160, y: 40, color: "red", r:25},
+            {id:"e", x: 200, y: 40, color: "red", r:20},
+        ];
 
 
 
-    data[2] = [
-        {x: 40, y: 80, color: "green"},
-        {x: 80, y: 80, color: "green"},
-        {x: 120, y: 80, color: "green"},
-        {x: 160, y: 80, color: "green"},
-        {x: 200, y: 80, color: "green"}
-    ];
+        data[2] = [
+            {id:"a", x: 40, y: 80, color: "green", r:15},
+            {id:"b", x: 80, y: 80, color: "green", r:26},
+            {id:"c", x: 120, y: 80, color: "green", r:5},
+            {id:"d", x: 160, y: 80, color: "green", r:20},
+            {id:"e", x: 200, y: 80, color: "green", r:25}
+        ];
 
+    /* */
 
     let dataIndex = 0;
-/*    var t = d3.transition()
-        .duration(3000)
-        .ease(d3.easeLinear);
+    /*    var t = d3.transition()
+            .duration(3000)
+            .ease(d3.easeLinear);
 
-    var t2 = d3.transition()
-        .duration(3000)
-        .ease(d3.easeLinear);*/
+        var t2 = d3.transition()
+            .duration(3000)
+            .ease(d3.easeLinear);*/
 
     const svg = d3.select(".chart");
 
@@ -93,14 +94,30 @@
 
     function changeData(dataIn) {
 
+        dataIn.sort((a, b) => b.r - a.r);
+
+        console.log("==dataIn==",dataIn);
+
         var checkFirstRun = true;
 
         var t = d3.transition()
             .duration(3000)
             .ease(d3.easeLinear);
 
-        svg.selectAll("circle")
-            .data(dataIn)
+
+/*
+* old way
+*
+
+$(data).each(function(i,d){
+    d3.select("#"+d.id).text(d.val);
+});
+* */
+        let circle = svg.selectAll("circle")
+            .data(dataIn, function(d) {
+                console.log("==this.id==",this.id);
+                return this.id || d.id;
+            })
             .join(
                 enter => enter.append('circle').attr("fill", "green"),
                 update => update.transition(t)
@@ -108,9 +125,17 @@
             )
             .transition(t)
             .attr("stroke", "black")
-            .attr("cx", (d) => (d.x))
+            .attr("cx", (d) => (d.r)*10)
             .attr("cy", (d) => (d.y))
+            .attr("r", (d) => (d.r))
             .on("end", () => {
+
+/*
+                if (dataIndex === data.length-1) {
+                    dataIndex = 0;
+                }
+*/
+
                 if ( checkFirstRun && dataIndex < data.length-1) {
 
                     checkFirstRun = false;
