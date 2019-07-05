@@ -30,8 +30,8 @@ export default class BarChartApp extends Component {
                 height: 300,
                 startDate: 1975,
                 endDate: 1978,
-                durationSec: 3000,
-                csvFileName: "../data/data_basic.csv"
+                durationSec: 3001,
+                csvFileName: "./data/data_basic1.csv"
             }
         }
 

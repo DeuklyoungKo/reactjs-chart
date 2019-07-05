@@ -60,9 +60,13 @@ module.exports = {
             filename: './index.html'
         }),
         new CopyPlugin([
-            { from: './src/data', to: 'data' },
+            {
+                from: './src/data',
+                to: 'data'
+            },
         ]),
 
         new CleanWebpackPlugin()
     ]
+
 };

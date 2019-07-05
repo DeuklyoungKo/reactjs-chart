@@ -13,11 +13,11 @@ export default class Index extends Component {
         this.config = {
             margin: {top: 20, right: 30, bottom: 30, left: 40},
             width: 500,
-            height: 300,
+            height: 500,
             startDate: 1975,
             endDate: 1978,
-            durationSec: 3000,
-            csvFileName: "../data/data_basic.csv"
+            durationSec: 3003,
+            csvFileName: "/build/data/data_basic.csv"
         }
 
         this.dataArray = [];
@@ -64,6 +64,8 @@ export default class Index extends Component {
         this.xAxis = d3.axisBottom(this.x);
         this.yAxis = d3.axisLeft(this.y);
 
+
+        console.log("width==",this.svgWidth + margin.left + margin.right + 60);
 
         this.chart = d3.select(".chart").append("svg")
             .attr("width", this.svgWidth + margin.left + margin.right + 60)
